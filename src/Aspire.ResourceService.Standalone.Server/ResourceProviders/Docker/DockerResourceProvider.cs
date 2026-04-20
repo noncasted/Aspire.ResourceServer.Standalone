@@ -104,8 +104,22 @@ internal sealed partial class DockerResourceProvider(IDockerClient dockerClient,
 
     public async Task<IList<ContainerListResponse>> GetContainers()
     {
+        var parameters = new ContainersListParameters { All = true };
+
+        var project = Environment.GetEnvironmentVariable("COMPOSE_PROJECT_FILTER");
+        if (!string.IsNullOrWhiteSpace(project))
+        {
+            parameters.Filters = new Dictionary<string, IDictionary<string, bool>>
+            {
+                ["label"] = new Dictionary<string, bool>
+                {
+                    [$"com.docker.compose.project={project}"] = true
+                }
+            };
+        }
+
         var c = await dockerClient.Containers
-            .ListContainersAsync(new ContainersListParameters() { All = true }, CancellationToken.None)
+            .ListContainersAsync(parameters, CancellationToken.None)
             .ConfigureAwait(false);
         return c;
     }
