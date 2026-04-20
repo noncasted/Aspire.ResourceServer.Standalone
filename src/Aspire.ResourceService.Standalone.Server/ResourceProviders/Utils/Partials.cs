@@ -15,7 +15,7 @@ public sealed partial class Resource
         var resource = new Resource
         {
             CreatedAt = Timestamp.FromDateTime(container.Created),
-            State = container.State,
+            State = MapDockerState(container.State),
             DisplayName = containerName,
             ResourceType = KnownResourceTypes.Container,
             Name = containerName,
@@ -35,6 +35,19 @@ public sealed partial class Resource
             }));
         return resource;
     }
+    // Docker returns states like "running" / "exited" (lowercase), whereas the Aspire dashboard
+    // expects KnownResourceStates values ("Running", "Exited", ...) for correct status icons.
+    private static string MapDockerState(string? dockerState) => dockerState?.ToLowerInvariant() switch
+    {
+        "running" or "paused" => "Running",
+        "created" => "NotStarted",
+        "restarting" => "Starting",
+        "removing" => "Stopping",
+        "exited" => "Exited",
+        "dead" => "Failed",
+        _ => dockerState ?? "Unknown"
+    };
+
     internal static Resource FromK8sContainer(KubernetesContainer container)
     {
         var resource = new Resource
