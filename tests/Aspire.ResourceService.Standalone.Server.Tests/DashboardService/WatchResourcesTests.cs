@@ -6,7 +6,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
-using DashboardServiceImpl = Aspire.ResourceService.Standalone.Server.Services.DashboardService;
+using DashboardServiceImpl = Aspire.ResourceService.Standalone.Server.Services.ContainerDashboardService;
 
 namespace Aspire.ResourceService.Standalone.Server.Tests.DashboardService;
 
