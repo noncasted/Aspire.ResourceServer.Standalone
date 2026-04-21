@@ -73,7 +73,24 @@ internal sealed partial class DockerResourceProvider(IDockerClient dockerClient,
     {
         var containers = await GetContainers().ConfigureAwait(false);
 
-        var container = containers.Single(c => c.Names.First().Replace("/", "").Equals(resourceName, StringComparison.Ordinal));
+        // Resource.Name comes from the compose service label when present (see Resource.FromDockerContainer),
+        // so the dashboard sends "silo" / "migrator" / ... — not the docker container name.
+        // Match the same precedence here, falling back to container name for unlabeled containers.
+        var container = containers.SingleOrDefault(c =>
+        {
+            var displayName = c.Labels is not null
+                              && c.Labels.TryGetValue("com.docker.compose.service", out var svc)
+                              && !string.IsNullOrWhiteSpace(svc)
+                ? svc
+                : c.Names.First().Replace("/", "");
+            return displayName.Equals(resourceName, StringComparison.Ordinal);
+        });
+
+        if (container is null)
+        {
+            logger.ResourceNotFound(resourceName, containers.Count);
+            yield break;
+        }
 
         var notificationChannel = Channel.CreateUnbounded<ResourceLogEntry>();
 
@@ -138,4 +155,7 @@ internal static partial class DockerResourceProviderLogs
 
     [LoggerMessage(LogLevel.Debug, "Skipping change of type: {Change}")]
     public static partial void SkippingChange(this ILogger<DockerResourceProvider> logger, string change);
+
+    [LoggerMessage(LogLevel.Warning, "Resource '{Resource}' not found among {Count} containers — log subscription returns empty stream")]
+    public static partial void ResourceNotFound(this ILogger<DockerResourceProvider> logger, string resource, int count);
 }
