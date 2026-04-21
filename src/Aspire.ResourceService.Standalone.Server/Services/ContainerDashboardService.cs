@@ -5,17 +5,17 @@ using Grpc.Core;
 
 namespace Aspire.ResourceService.Standalone.Server.Services;
 
-internal sealed class вDashboardService : Proto.V1.DashboardService.DashboardServiceBase
+internal sealed class ContainerDashboardService : Proto.V1.DashboardService.DashboardServiceBase
 {
     private readonly IHostApplicationLifetime _hostApplicationLifetime;
-    private readonly ILogger<DashboardService> _logger;
+    private readonly ILogger<ContainerDashboardService> _logger;
     private readonly IResourceProvider _resourceProvider;
     private readonly IServiceInformationProvider _serviceInformationProvider;
 
-    public DashboardService(IServiceInformationProvider serviceInformationProvider,
+    public ContainerDashboardService(IServiceInformationProvider serviceInformationProvider,
         IResourceProvider resourceProvider,
         IHostApplicationLifetime hostApplicationLifetime,
-        ILogger<DashboardService> logger)
+        ILogger<ContainerDashboardService> logger)
     {
         _serviceInformationProvider = serviceInformationProvider;
         _resourceProvider = resourceProvider;
@@ -177,14 +177,14 @@ internal static partial class WatchResourcesLogs
 internal static partial class WatchResourceConsoleLogsLogs
 {
     [LoggerMessage(LogLevel.Trace, "Started watching console logs for resource: {Resource}")]
-    public static partial void StartedWatchingResourceConsoleLogs(this ILogger<DashboardService> logger, string resource);
+    public static partial void StartedWatchingResourceConsoleLogs(this ILogger<ContainerDashboardService> logger, string resource);
 
     [LoggerMessage(LogLevel.Trace, "Awaiting log stream for resource: {Resource}")]
-    public static partial void AwaitingLogStream(this ILogger<DashboardService> logger, string resource);
+    public static partial void AwaitingLogStream(this ILogger<ContainerDashboardService> logger, string resource);
 
     [LoggerMessage(LogLevel.Trace, "Got log entry from stream: {Entry}")]
-    public static partial void GotLogEntry(this ILogger<DashboardService> logger, ResourceLogEntry entry);
+    public static partial void GotLogEntry(this ILogger<ContainerDashboardService> logger, ResourceLogEntry entry);
 
     [LoggerMessage(LogLevel.Trace, "Writing log item to stream: {Update}")]
-    public static partial void WritingLogToOutputStream(this ILogger<DashboardService> logger, WatchResourceConsoleLogsUpdate update);
+    public static partial void WritingLogToOutputStream(this ILogger<ContainerDashboardService> logger, WatchResourceConsoleLogsUpdate update);
 }

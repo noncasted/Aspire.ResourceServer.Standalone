@@ -23,6 +23,6 @@ if (app.Environment.IsDevelopment())
 app.MapDefaultEndpoints();
 app.MapGet("/info", (IServiceInformationProvider sip) => Results.Ok(sip.GetServiceInformation()));
 
-app.MapGrpcService<DashboardService>();
+app.MapGrpcService<ContainerDashboardService>();
 
 app.Run();
