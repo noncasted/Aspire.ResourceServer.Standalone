@@ -97,12 +97,16 @@ internal sealed partial class KubernetesResourceProvider(IKubernetes kubernetes,
 
         cancellationToken.Register(reader.Close);
 
-        while (!reader.EndOfStream)
+        while (true)
         {
             string? logline;
             try
             {
                 logline = await reader.ReadLineAsync(cancellationToken).ConfigureAwait(false);
+                if (logline is null)
+                {
+                    yield break;
+                }
             }
             catch (IOException)
             {
