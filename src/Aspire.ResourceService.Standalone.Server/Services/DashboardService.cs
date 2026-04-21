@@ -5,7 +5,7 @@ using Grpc.Core;
 
 namespace Aspire.ResourceService.Standalone.Server.Services;
 
-internal sealed class DashboardService : Proto.V1.DashboardService.DashboardServiceBase
+internal sealed class вDashboardService : Proto.V1.DashboardService.DashboardServiceBase
 {
     private readonly IHostApplicationLifetime _hostApplicationLifetime;
     private readonly ILogger<DashboardService> _logger;
@@ -116,7 +116,7 @@ internal sealed class DashboardService : Proto.V1.DashboardService.DashboardServ
                 _logger.GotLogEntry(log);
                 var update = new WatchResourceConsoleLogsUpdate();
                 update.LogLines.Add(new ConsoleLogLine { Text = log.Text, IsStdErr = false, LineNumber = ++lineNumber });
-                
+
                 _logger.WritingLogToOutputStream(update);
                 await responseStream.WriteAsync(update, CancellationToken.None).ConfigureAwait(false);
             }
